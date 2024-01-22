@@ -35,14 +35,14 @@ struct PS_IN
 //───────────────────────────────────────
 // 頂点シェーダ
 //───────────────────────────────────────
-PS_IN VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL)
+PS_IN VS(float4 pos : POSITION, float2 uv : TEXCOORD, float4 normal : NORMAL)
 {
 	//ピクセルシェーダーへ渡す情報
 	PS_IN outData = (PS_IN)0;
 
 	outData.pos = mul(pos, matWVP);
 	//outData.pos = pos;
-	outData.uv = uv;
+	outData.uv = (float2)uv;
 	float4 normalout;
 	normalout = mul(normal, matNormal);
 	normalout.w = 0;
@@ -63,13 +63,13 @@ float4 PS(PS_IN inData) : SV_Target
 {
 
 	float len = length(inData.light); // 光の方向ベクトルを正規化(大きさを 1 にし
-					
+
 	float NL = saturate(dot(inData.normal, inData.light));
 	float k = 1.0f / (1.0 * len * len);
 
-	float3 reflect = normalize(2 * NL * inData.normal - inData.light);
+	float4 reflect = normalize(2 * NL * inData.normal - inData.light);
 	float4 specular = pow(saturate(dot(reflect, inData.eyev)), 8);
-	
+
 
 	float4 lightSource = { 1,1,1,1 };//光の色
 	float4 ambientSource = { 1,1,1,1 };//環境光の色
@@ -79,12 +79,12 @@ float4 PS(PS_IN inData) : SV_Target
 	float4 ambient;
 	if (isTextured.x == false)
 	{
-		diffuse = k*NL*lightSource * diffuseColor;
+		diffuse = k * NL * lightSource * diffuseColor;
 		ambient = ambTerm * ambientSource * diffuseColor;
 	}
 	else
 	{
-		diffuse = k*NL*lightSource * g_texture.Sample(g_sampler, inData.uv);
+		diffuse = k * NL * lightSource * g_texture.Sample(g_sampler, inData.uv);
 		ambient = ambTerm * ambientSource * g_texture.Sample(g_sampler, inData.uv);
 	}
 

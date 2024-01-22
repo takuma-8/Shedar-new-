@@ -14,6 +14,9 @@ cbuffer gmodel:register(b0)
 	float4x4	matW;           // ワールド行列
 	float4x4	matNormal;           // ワールド行列
 	float4		diffuseColor;		//マテリアルの色＝拡散反射係数
+	float4		ambientColor;		//環境光
+	float4		specularColor;		//鏡面反射＝ハイライト
+	float		shininess;
 	bool		isTextured;			//テクスチャーが貼られているかどうか
 
 };
@@ -49,10 +52,10 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL)
 	//ローカル座標に、ワールド・ビュー・プロジェクション行列をかけて
 	//スクリーン座標に変換し、ピクセルシェーダーへ
 	outData.pos = mul(pos, matWVP);
-	outData.uv = uv;
+	outData.uv = (float2)uv;
 	normal.w = 0;
-	normal = mul(normal , matNormal);//回す
-	normal = normalize(normal);//正規化
+	normal = mul(normal, matNormal);
+	normal = normalize(normal);
 	outData.normal = normal;
 
 	float4 light = normalize(lightPosition);
@@ -71,25 +74,25 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL)
 //───────────────────────────────────────
 float4 PS(VS_OUT inData) : SV_Target
 {
-	float4 lightSource = float4(1.0, 1.0, 1.0, 1.0); //ライト色＆明るさ Iin
-	float4 ambentSource = float4(0.2, 0.2, 0.2, 1.0); //アンビエント係数 Ka
+	float4 lightSource = float4(1.0, 1.0, 1.0, 1.0);
 	float4 diffuse;
-	float4 ambient; 
-	float4 NL = dot(inData.normal, normalize(lightPosition)); //内積
-	float4 reflect = normalize(2 * NL * inData.normal - normalize(lightPosition));//こういう公式
-	float4 specular = pow(saturate(dot(reflect, normalize(inData.eyev))),8);
+	float4 ambient;
+	float4 NL = saturate(dot(inData.normal, normalize(lightPosition)));
+	//float4 reflect = normalize(2 * NL * inData.normal - normalize(lightPosition));
+	float4 reflection = reflect(normalize(-lightPosition), inData.normal);
+	float4 specular = pow(saturate(dot(reflection, normalize(inData.eyev))), shininess) * specularColor;
 	if (isTextured == 0)
 	{
 		diffuse = lightSource * diffuseColor * inData.color;
-		ambient = lightSource * diffuseColor * ambentSource;
+		ambient = lightSource * diffuseColor * ambientColor;
 	}
 	else
 	{
 		diffuse = lightSource * g_texture.Sample(g_sampler, inData.uv) * inData.color;
-		ambient = lightSource * g_texture.Sample(g_sampler, inData.uv) * ambentSource;
+		ambient = lightSource * g_texture.Sample(g_sampler, inData.uv) * ambientColor;
 	}
 	return diffuse + ambient + specular;
 
-	
+
 	//return g_texture.Sample(g_sampler, inData.uv);
 }

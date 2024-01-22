@@ -12,7 +12,7 @@
 //定数宣言
 const char* WIN_CLASS_NAME = "SampleGame";  //ウィンドウクラス名
 const int WINDOW_WIDTH = 1280;  //ウィンドウの幅
-const int WINDOW_HEIGHT =1024; //ウィンドウの高さ
+const int WINDOW_HEIGHT = 1024; //ウィンドウの高さ
 
 RootJob* pRootJob = nullptr;
 

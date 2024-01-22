@@ -31,7 +31,7 @@ void Stage::IntConstantBuffer()
 
 //コンストラクタ
 Stage::Stage(GameObject* parent)
-    :GameObject(parent, "Stage"), hModel_(-1),hGround_(-1),lightSourcePosition_(DEF_LIGHT_POSITION)
+    :GameObject(parent, "Stage"), hModel_(-1), hGround_(-1), lightSourcePosition_(DEF_LIGHT_POSITION)
 {
 }
 
@@ -47,23 +47,23 @@ void Stage::Initialize()
     hModel_ = Model::Load("assets/Torus.fbx");
     hGround_ = Model::Load("assets/Ground.fbx");
     hLightBall_ = Model::Load("assets/RedBall.fbx");
-    
+
     assert(hModel_ >= 0);
     assert(hGround_ >= 0);
     assert(hLightBall_ >= 0);
-    Camera::SetPosition(XMVECTOR{ 0, 10, -20, 0 });
+    Camera::SetPosition(XMVECTOR{ 0, 1, -10, 0 });
     Camera::SetTarget(XMVECTOR{ 0, 2, 0, 0 });
-    trDonuts.position_ = {0, 2, 0};
+    trDonuts.position_ = { 0, 2, 0 };
     trDonuts.rotate_ = { 0, 0, 0 };
-    trDonuts.scale_ = {  1,1,1 };
+    trDonuts.scale_ = { 1,1,1 };
 
     trGround.position_ = { 0, 0, 0 };
-    trGround.rotate_ = { 0, 0, 0};
+    trGround.rotate_ = { 0, 0, 0 };
     trGround.scale_ = { 10, 10, 10 };
 
-    trLightBall.position_ = { 0, 0, 0 };
+    trLightBall.position_ = { 1, 1, 2 };
     trLightBall.rotate_ = { 0, 0, 0 };
-    trLightBall.scale_ = { 0.4, 0.4, 0.4 };
+    trLightBall.scale_ = { 0.4f, 0.4f, 0.4f };
     Instantiate<axisClass>(this);
     IntConstantBuffer();
 }
@@ -76,13 +76,13 @@ void Stage::Update()
     {
         Model::ToggleRenderState();
     }
-   //transform_.rotate_.y += 0.5f;
-   // trDonuts.rotate_.y += 0.5f;
+    //transform_.rotate_.y += 0.5f;
+    // trDonuts.rotate_.y += 0.5f;
     if (Input::IsKey(DIK_RIGHT))
     {
         XMFLOAT4 p = GetLightPos();
-        XMFLOAT4 margin{ p.x+0.1f, p.y+0.0f, p.z+ 0.0f, p.w + 0.0f };
-        
+        XMFLOAT4 margin{ p.x + 0.1f, p.y + 0.0f, p.z + 0.0f, p.w + 0.0f };
+
         //Model::GetModel(hModel_)->SetLightPos(margin);
         SetLightPos(margin);
     }
@@ -91,7 +91,7 @@ void Stage::Update()
         XMFLOAT4 p = GetLightPos();
         XMFLOAT4 margin{ p.x - 0.1f, p.y - 0.0f, p.z - 0.0f, p.w - 0.0f };
 
-       /// Model::GetModel(hModel_)->SetLightPos(margin);
+        /// Model::GetModel(hModel_)->SetLightPos(margin);
         SetLightPos(margin);
     }
     if (Input::IsKey(DIK_UP))
@@ -113,7 +113,7 @@ void Stage::Update()
     if (Input::IsKey(DIK_W))
     {
         XMFLOAT4 p = GetLightPos();
-        XMFLOAT4 margin{ p.x - 0.0f, p.y - 0.0f, p.z + 0.1f, p.w + 0.0f };
+        XMFLOAT4 margin{ p.x - 0.0f, p.y - 0.0f, p.z + 0.1f, 0 };
 
         //Model::GetModel(hModel_)->SetLightPos(margin);
         SetLightPos(margin);
@@ -121,7 +121,7 @@ void Stage::Update()
     if (Input::IsKey(DIK_S))
     {
         XMFLOAT4 p = GetLightPos();
-        XMFLOAT4 margin{ p.x - 0.0f, p.y - 0.0f, p.z - 0.1f, p.w - 0.0f };
+        XMFLOAT4 margin{ p.x - 0.0f, p.y - 0.0f, p.z - 0.1f, 0 };
 
         //Model::GetModel(hModel_)->SetLightPos(margin);
         SetLightPos(margin);
@@ -131,9 +131,9 @@ void Stage::Update()
 
     CBUFF_STAGESCENE cb;
     cb.lightPosition = lightSourcePosition_;
-    XMStoreFloat4(&cb.eyePos,Camera::GetEyePosition());
+    XMStoreFloat4(&cb.eyePos, Camera::GetEyePosition());
 
-    Direct3D::pContext_->UpdateSubresource(pCBStageScene_, 
+    Direct3D::pContext_->UpdateSubresource(pCBStageScene_,
         0, NULL, &cb, 0, 0);
 
     Direct3D::pContext_->VSSetConstantBuffers(1, 1, &pCBStageScene_);	//頂点シェーダー用	

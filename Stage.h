@@ -7,6 +7,7 @@ struct CBUFF_STAGESCENE
 {
     XMFLOAT4	lightPosition;
     XMFLOAT4	eyePos;
+
 };
 
 //ŸŸŸ‚ğŠÇ—‚·‚éƒNƒ‰ƒX
@@ -41,6 +42,6 @@ public:
     //ŠJ•ú
     void Release() override;
 
-    void	SetLightPos(XMFLOAT4& _pos){ lightSourcePosition_ = _pos; }
+    void	SetLightPos(XMFLOAT4& _pos) { lightSourcePosition_ = _pos; }
     XMFLOAT4 GetLightPos() { return(lightSourcePosition_); }
 };
