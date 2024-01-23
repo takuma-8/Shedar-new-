@@ -3,7 +3,7 @@
 
 namespace Model {
 
-	//モデルのポインタをぶち込んでおくベクタ
+	//モデルのポインタをぶち込んでベクタ
 	std::vector<ModelData*> modelList;
 	RENDER_STATE state_;
 }
@@ -15,7 +15,7 @@ int Model::Load(std::string fileName)
 	pData->filename_ = fileName;
 	pData->pfbx_ = nullptr;
 
-	//ファイルネームが同じだったら、読まん！
+	
 	for (auto& e : modelList)
 	{
 		if (e->filename_ == fileName) {
