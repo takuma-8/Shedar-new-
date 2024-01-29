@@ -379,5 +379,4 @@ void Fbx::Draw(Transform& transform)
 }
 
 void Fbx::Release()
-{
-}
+{}

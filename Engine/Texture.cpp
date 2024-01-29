@@ -7,20 +7,20 @@
 
 
 Texture::Texture()
-	:pSampler_(nullptr),pSRV_(nullptr)
+	:pSampler_(nullptr), pSRV_(nullptr)
 {
 }
 
 Texture::~Texture()
 {
-    Release();
+	Release();
 }
 
 HRESULT Texture::Load(string filename)
 {
 	using namespace DirectX;
 	//////////‰æ‘œ“Ç‚İ‚İ•”•ªi•ÏXj
-	
+
 	wchar_t wtext[FILENAME_MAX];
 	size_t ret;
 	mbstowcs_s(&ret, wtext, filename.c_str(), filename.length());
@@ -60,7 +60,7 @@ HRESULT Texture::Load(string filename)
 	{
 		return S_FALSE;
 	}
-    return S_OK;
+	return S_OK;
 }
 
 

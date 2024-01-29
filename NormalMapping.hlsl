@@ -71,12 +71,12 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal : NORMAL, f
 
 
 	float4 posw = mul(pos, matW);
-	outData.eyev = normalize(posw - eyePosition); //ワールド座標の視線ベクトル
+	float4 eye = normalize(posw - eyePosition); //ワールド座標の視線ベクトル
 
 
-	outData.Neyev.x = dot(outData.eyev, tangent);//接空間の視線ベクトル
-	outData.Neyev.y = dot(outData.eyev, binormal);
-	outData.Neyev.z = dot(outData.eyev, normal);
+	outData.Neyev.x = dot(eye, tangent);//接空間の視線ベクトル
+	outData.Neyev.y = dot(eye, binormal);
+	outData.Neyev.z = dot(eye, normal);
 	outData.Neyev.w = 0;
 
 	float4 light = normalize(lightPosition);
