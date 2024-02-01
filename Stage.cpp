@@ -31,7 +31,7 @@ void Stage::IntConstantBuffer()
 
 //コンストラクタ
 Stage::Stage(GameObject* parent)
-    :GameObject(parent, "Stage"), hModel_(-1), hGround_(-1), lightSourcePosition_(DEF_LIGHT_POSITION)
+    :GameObject(parent, "Stage"), hModel_(-1), hGround_(-1), lightSourcePosition_(DEF_LIGHT_POSITION), sprite_(nullptr)
 {
 }
 
@@ -51,7 +51,7 @@ void Stage::Initialize()
     assert(hModel_ >= 0);
     assert(hGround_ >= 0);
     assert(hLightBall_ >= 0);
-    Camera::SetPosition(XMVECTOR{ 0, 1, -5, 0 });
+    Camera::SetPosition(XMVECTOR{ 0, 1, -15, 0 });
     Camera::SetTarget(XMVECTOR{ 0, 2, 0, 0 });
     trDonuts.position_ = { 0, 2, 0 };
     trDonuts.rotate_ = { 0, 0, 0 };
@@ -64,8 +64,12 @@ void Stage::Initialize()
     trLightBall.position_ = { 1, 1, 2 };
     trLightBall.rotate_ = { 0, 0, 0 };
     trLightBall.scale_ = { 0.4f, 0.4f, 0.4f };
-    Instantiate<axisClass>(this);
+    //Instantiate<axisClass>(this);
     IntConstantBuffer();
+
+    sprite_ = new Sprite;
+
+    sprite_->Load("fax.png");
 }
 
 //更新
@@ -77,7 +81,7 @@ void Stage::Update()
         Model::ToggleRenderState();
     }
     //transform_.rotate_.y += 0.5f;
-    // trDonuts.rotate_.y += 0.5f;
+    trDonuts.rotate_.y += 0.5f;
     if (Input::IsKey(DIK_RIGHT))
     {
         XMFLOAT4 p = GetLightPos();
@@ -131,7 +135,7 @@ void Stage::Update()
 
     CBUFF_STAGESCENE cb;
     cb.lightPosition = lightSourcePosition_;
-    XMStoreFloat4(&cb.eyePos, Camera::GetEyePosition());
+    XMStoreFloat4(&(cb.eyePos), Camera::GetEyePosition());
 
     Direct3D::pContext_->UpdateSubresource(pCBStageScene_,
         0, NULL, &cb, 0, 0);
@@ -143,6 +147,8 @@ void Stage::Update()
 //描画
 void Stage::Draw()
 {
+
+
     //q->Draw(transform_);
     Model::SetTransform(hModel_, trDonuts);
     Model::Draw(hModel_);
@@ -150,6 +156,13 @@ void Stage::Draw()
     //Model::Draw(hGround_);
     Model::SetTransform(hLightBall_, trLightBall);
     Model::Draw(hLightBall_);
+
+    Transform t;
+    t.position_ = { 0, 0, 0 };
+    t.scale_ = { 1.0, 1.0, 1.0 };
+    t.rotate_ = { 0,0,0 };
+    RECT rec{ 0, 0, 300, 300 };
+    sprite_->Draw(t, rec, 0.5f);
 }
 
 //開放
